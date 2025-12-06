@@ -93,7 +93,36 @@ app.get('/api/stats', (req, res) => {
     currentWards
   });
 });
+// --- BẮT ĐẦU ĐOẠN CODE GIẢ LẬP PHP (Dán vào server.js) ---
 
+// API giả lập address-api.php để lừa app cũ
+app.get('/address-api.php', (req, res) => {
+    const action = req.query.action;
+    const province_name = req.query.province_name;
+
+    // Nếu app cũ hỏi lấy quận huyện (districts)
+    if (action === 'districts') {
+        if (!province_name) return res.json([]);
+
+        // Tìm tỉnh trong dữ liệu provinces có sẵn của server
+        // (Biến 'provinces' đã được load ở đầu file server.js)
+        const foundProvince = provinces.find(p => 
+            p.name.toLowerCase() === province_name.toLowerCase() ||
+            p.name.toLowerCase().includes(province_name.toLowerCase())
+        );
+
+        if (foundProvince) {
+            // Trả về danh sách quận/huyện (wards) của tỉnh đó
+            // Lưu ý: Cấu trúc JSON của cậu dùng 'wards' thay vì 'districts'
+            return res.json(foundProvince.wards || []);
+        }
+    }
+
+    // Mặc định trả về rỗng nếu không tìm thấy gì
+    res.json([]);
+});
+
+// --- KẾT THÚC ĐOẠN CODE ---
 // Phục vụ file tĩnh frontend
 app.use(express.static(path.join(__dirname, 'public')));
 
