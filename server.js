@@ -93,50 +93,7 @@ app.get('/api/stats', (req, res) => {
     currentWards
   });
 });
-//php
-app.get('/address-api.php', (req, res) => {
-    // Lấy tham số từ đường dẫn (URL)
-    // Ví dụ: /address-api.php?action=districts&province_name=Hà Nội
-    const action = req.query.action;
-    const province_name = req.query.province_name;
 
-    // Set header để trình duyệt/app hiểu đây là dữ liệu JSON
-    res.setHeader('Content-Type', 'application/json');
-
-    // Xử lý logic
-    if (action === 'districts') {
-        if (!province_name) {
-            return res.json({ error: "Thiếu tên tỉnh (province_name)" });
-        }
-
-        // Tìm tỉnh trong dữ liệu khớp với tên người dùng gửi lên
-        // (Dùng toLowerCase để tìm không phân biệt hoa thường)
-        const foundProvince = data.find(item => 
-            item.name.toLowerCase() === province_name.toLowerCase() || 
-            item.name.toLowerCase().includes(province_name.toLowerCase())
-        );
-
-        if (foundProvince) {
-            // Repo 'dvhcvn' thường lưu quận huyện trong thuộc tính 'level2s'
-            // Nếu không phải 'level2s', hãy thử đổi thành 'districts'
-            const districts = foundProvince.level2s || foundProvince.districts || [];
-            
-            // Trả về danh sách quận huyện
-            return res.json(districts);
-        } else {
-            // Không tìm thấy tỉnh
-            return res.json([]); 
-        }
-    }
-
-    // Nếu action không phải là 'districts'
-    return res.json({ message: "Action không hợp lệ hoặc chưa hỗ trợ" });
-});
-
-// Chạy server
-app.listen(PORT, () => {
-    console.log(`Server đang chạy tại http://localhost:${PORT}`);
-});
 // Phục vụ file tĩnh frontend
 app.use(express.static(path.join(__dirname, 'public')));
 
